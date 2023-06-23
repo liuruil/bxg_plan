@@ -1,0 +1,66 @@
+html,
+body,
+#app {
+    height: 100%;
+    background-color: #fff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#app>div.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    height: 60px;
+    width: 100%;
+    background-color: #3E7BFA;
+    color: #fff;
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+#app>div.header p {
+    word-wrap: break-word;
+    cursor: pointer;
+}
+
+div.left {
+    width: 200px;
+    height: calc(100% - 60px);
+    float: left;
+    margin-top: 60px;
+}
+
+.el-menu-item.is-active {
+    color: #3E7BFA;
+}
+
+.el-menu-vertical-demo {
+    height: 100%;
+}
+
+div.right.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    overflow: hidden;
+}
+
+div.right .header {
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eaeefb;
+}
+
+div.right img {
+    height: 600px;
+    display: block;
+}

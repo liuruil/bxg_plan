@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1"
+    >
+    <title>学生计划平台</title>
+    <link
+        rel="stylesheet"
+        href="//unpkg.com/element-plus/dist/index.css"
+    />
+    <link
+        rel="stylesheet"
+        href="./css/index.css"
+    >
+    <script src="//unpkg.com/vue@3"></script>
+    <script src="//unpkg.com/element-plus"></script>
+    <script src="./js/index.js"></script>
+
+</head>
+
+<body>
+
+    <div id="app">
+        <div class="header">
+            <img
+                src="https://zh.pngtree.com/freepng/beautiful-hologram--color_3643167.html"
+                alt=""
+            >
+            <p @click="copyTexy">{{this.text}}</p>
+        </div>
+        <div class="left">
+            <el-menu
+                :default-active="defaultActive"
+                class="el-menu-vertical-demo"
+                unique-opened
+            >
+                <el-sub-menu
+                    v-for="(item,index) in menu"
+                    :index="index.toString()"
+                >
+                    <template #title>
+                        <span>{{item}}</span>
+                    </template>
+                    <el-menu-item
+                        :index="index + '-' + ind"
+                        @click="gotoItem(i,index + '-' + ind)"
+                        v-for="(i,ind) in list[item]"
+                    >{{i.split('期/')[1].split('.')[0]}}</el-menu-item>
+                </el-sub-menu>
+            </el-menu>
+        </div>
+        <div class="right content">
+            <el-card class="box-card">
+                <div
+                    slot="header"
+                    class="clearfix header"
+                >
+                    <span>{{name}}</span>
+                </div>
+                <div>
+                    <img
+                        :src="img"
+                        alt=""
+                    >
+                </div>
+        </div>
+        </el-card>
+    </div>
+    </div>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        Vue.createApp({
+                data() {
+                    return {
+                        menu: [],
+                        list: [],
+                        count: 0,
+                        img: '',
+                        name: '',
+                        text: '',
+                        defaultActive: '0-0',
+                        nickname: '',
+                        studentsList: [],
+                        testCountCache: new Map()
+                    }
+                },
+                async mounted() {
+                    await this.getMenu()
+                    await this.getList()
+                    await this.getAllStudents()
+                    this.defaultActive = localStorage.getItem('active') || '0-0'
+                    const arr = this.defaultActive.split('-')
+                    this.img = this.list[this.menu[arr[0]]][arr[1]]
+                    // 缓存有对应的测试题个数
+                    if (this.testCountCache.has(this.img)) {
+                        this.count = this.testCountCache.get(this.img).count
+                        return;
+                    }
+                    await this.getTestCountFunc()
+                },
+                methods: {
+                    async getTestCountFunc() {
+                        const url = await convertImgToBase64(this.img);
+                        const words_result = await getData(url)
+                        this.count = getTestCount(words_result)
+                        this.testCountCache.set(this.img, {
+                            url,
+                            count: this.count
+                        })
+                    },
+                    // 复制文本
+                    copyTexy() {
+                        navigator.clipboard.writeText(this.text)
+                        this.$notify({
+                            title: '成功',
+                            message: '复制文本成功',
+                            type: 'success',
+                            position: 'bottom-right'
+                        });
+                    },
+                    async gotoItem(i, index) {
+                        this.img = i
+                        localStorage.setItem('active', index)
+                        if (this.testCountCache.has(this.img)) {
+                            this.count = this.testCountCache.get(this.img).count
+                            return;
+                        }
+                        await this.getTestCountFunc()
+                    },
+                    async getMenu() {
+                        const res = await axios.get('/courseList')
+                        this.menu = res.data
+                    },
+                    async getList() {
+                        const res = await axios.get('/allStudentsSnapList')
+                        const obj = {}
+                        this.menu.forEach(element => obj[element] = []);
+                        this.menu.forEach(i => {
+                            const r = res.data.filter(name => name.includes(i))
+                            obj[i] = r
+                        })
+                        this.list = obj
+                    },
+                    async getAllStudents() {
+                        const {
+                            data
+                        } = await axios.get('/allStudents')
+                        this.studentsList = data
+                    }
+                },
+                watch: {
+                    img(imgPath) {
+                        this.name = imgPath.split('期/')[1].split('.')[0]
+                        const student = this.studentsList.find(item => item.name === this.name)
+                        if (student) {
+                            this.nickname = student.nickName
+                            let text = '昨天的单元测评如果有遗漏的话记得抽时间补上，没有的话请忽略。\n这是今天的学习任务，'
+                            text += this.count ? `包含${this.count}个单元测评，` : '无单元测评，'
+                            text += '收到回复我哈@' + this.nickname
+                            this.text = text
+                        }
+
+                    }
+                }
+            })
+            .use(ElementPlus)
+            .mount('#app')
+    </script>
+
+    <script>
+        (async () => {
+            const url = await convertImgToBase64('./企业微信截图_9d63284c-6be1-4303-a202-5c7dcd7756c5.png')
+            console.log(url)
+            const data = await getData(url)
+            console.log(data)
+        })()
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "snap-project",
+  "version": "1.0.0",
+  "description": "一个学习计划截图工具",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "node ./src/entry.js",
+    "chrome": "sudo /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9222"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "chalk": "^4.1.2",
+    "express": "^4.18.2",
+    "images": "^3.2.4",
+    "inquirer": "8",
+    "ora": "5",
+    "puppeteer": "^20.5.0",
+    "qs": "^6.11.2"
+  }
+}
