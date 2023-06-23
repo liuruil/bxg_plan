@@ -4,12 +4,15 @@
 
 ```text
 
-+ public     # 静态资源
++ public       # 静态资源
+  + css        # css文件
   + images     # 存放截图
+  + js         # js文件
   + index.html # 前台入口
 + src
   + config     # 配置文件
   + data       # 学生数据
+  + script     # 脚本文件
   + util       # 工具函数
   + index.js   # 主文件
   + entry.js   # 入口文件
