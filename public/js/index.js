@@ -19,7 +19,6 @@ async function getData(image) {
     "https://aip.baidubce.com/rest/2.0/ocr/v1/table?access_token=24.1c18f781a5dc8afe89eff09834e6d0b0.2592000.1689241254.282335-34773198",
     {
       image,
-      cell_contents: true,
     },
     {
       headers: {
