@@ -43,11 +43,12 @@ function setConfigFile(webSocketDebuggerUrl) {
     path.resolve(__dirname, "../config/index.js"),
     "utf-8"
   );
-  const splitArr = data.split("ws://localhost:9222/devtools/browser/");
-  var end = splitArr[1].split('",');
-  end[0] = webSocketDebuggerUrl;
-  var result = splitArr[0] + end.join('",');
-  fs.writeFileSync(path.resolve(__dirname, "../config/index.js"), result);
+  const reg = /ws:\/\/localhost:9222\/devtools\/browser\/[0-9a-z-]{36}/g;
+  data.replace(reg, webSocketDebuggerUrl);
+  fs.writeFileSync(
+    path.resolve(__dirname, "../config/index.js"),
+    data.replace(reg, webSocketDebuggerUrl)
+  );
 }
 
 /**
