@@ -44,7 +44,6 @@ function setConfigFile(webSocketDebuggerUrl) {
     "utf-8"
   );
   const reg = /ws:\/\/localhost:9222\/devtools\/browser\/[0-9a-z-]{36}/g;
-  data.replace(reg, webSocketDebuggerUrl);
   fs.writeFileSync(
     path.resolve(__dirname, "../config/index.js"),
     data.replace(reg, webSocketDebuggerUrl)
