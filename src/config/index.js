@@ -20,7 +20,7 @@ module.exports = {
   baseUploadImageUrl: path.resolve(__dirname, "../../public/images"),
   // 浏览器ws地址
   browserWSEndpoint:
-    "ws://localhost:9222/devtools/browser/69f904ff-a135-48d1-aed7-29bd070d70e8",
+    "ws://localhost:9222/devtools/browser/b0327740-897e-45b8-a0ab-2ce5cacf8e82",
   // 页面基地址
   baseUrl:
     "https://work.boxuegu.com/education/my-course-manage/my-course/learning-plan",
