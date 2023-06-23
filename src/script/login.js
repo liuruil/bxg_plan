@@ -7,17 +7,15 @@ const loginScript = require("../config/loginScript");
 const { defaultViewport, browserWSEndpoint } = require("../config");
 // 发送验证码
 async function sendCode() {
-  let browser, page;
   console.log(chalk.blue("打开浏览器，进入系统登录页面"));
   console.log("\r");
-  // 启动浏览器
-  browser = await puppeteer.connect({
+  const browser = await puppeteer.connect({
     browserWSEndpoint,
     defaultViewport,
     headless: "new",
   });
   // 在浏览器窗口中加载并测试网站
-  page = await browser.newPage();
+  const page = await browser.newPage();
   await page.goto(
     "https://eauth.boxuegu.com/auth/realms/employee/protocol/openid-connect/auth?client_id=bxg-admin-web&redirect_uri=https%3A%2F%2Fwork.boxuegu.com%2Feducation%2Fmy-course-manage%2Fmy-course%2Flearning-plan%3FstuCourseId%3D1995401%26courseId%3D4438&state=de459a85-c858-4cb1-8800-b746b9313b2e&response_mode=fragment&response_type=code&scope=openid&nonce=052e2568-eeb5-49e3-8736-5f4c95ccb841"
   );
