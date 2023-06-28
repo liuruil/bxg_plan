@@ -1,3 +1,4 @@
+const ora = require("ora");
 const chalk = require("chalk");
 const inquirer = require("inquirer");
 const createServer = require("./server");
@@ -22,12 +23,10 @@ const { sendCode, login, autoProcess } = require("./script/login");
     ]);
     // 5. 执行登录操作
     await login(code, page);
-    // 6. 执行自动化操作
+    // 6. 执行自动化操作，获取学生数据
     await autoProcess(page, browser);
-    // 7. 获取学生截图数据
-    await init();
     // 8. 开启服务器,自动打开我的系统页面
-    createServer();
+    createServer(page);
   } catch (error) {
     console.log(error);
     console.log(`请重新运行此命令 \r\n${chalk.yellow("yarn start")}`);

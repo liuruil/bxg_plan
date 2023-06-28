@@ -16,11 +16,6 @@ const userData = {
         nickName: "广州 黄嘉杰",
       },
       {
-        name: "陶泰安",
-        id: "1995463",
-        nickName: "广州 黄嘉杰",
-      },
-      {
         name: "侯思婕",
         id: "1988234",
         nickName: "侯思婕",
@@ -28,10 +23,7 @@ const userData = {
     ],
   },
   [ZX_ID]: {
-    三期: [
-      { name: "刘象军", id: "1966333", nickName: "广州 黄嘉杰" },
-      // ......
-    ],
+    三期: [{ name: "刘象军", id: "1966333", nickName: "广州 黄嘉杰" }],
     五期: [],
     七期: [],
     八期: [],
@@ -47,7 +39,7 @@ const userData = {
 function getIdListByType(userData, type) {
   return Object.values(userData[type])
     .flat()
-    .map((item) => item.id);
+    .map((item) => ({ id: item.id, name: item.name }));
 }
 
 function getAllCourseKey(userData, type) {
