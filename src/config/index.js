@@ -11,17 +11,18 @@ module.exports = {
       y: 220,
     },
   },
-  //页面视口显示大小
-  defaultViewport: {
-    width: 1920,
-    height: 1080,
+  // puppeteer连接配置
+  puppeteerConnectOptions: {
+    // 浏览器地址
+    browserWSEndpoint:
+      "ws://localhost:9222/devtools/browser/0a64458b-3813-408d-99d9-6f29bcea476b",
+    // 默认窗口大小
+    defaultViewport: { width: 1920, height: 1080 },
+    headless: "new",
   },
   // 存放图片的默认路径
   baseUploadImageUrl: path.resolve(__dirname, "../../public/images"),
-  // 浏览器ws地址
-  browserWSEndpoint:
-    "ws://localhost:9222/devtools/browser/2c23e639-0a33-4f5f-acc9-199b9c5ce82d",
-  // 页面基地址
+  // 学习计划页面地址
   baseUrl:
     "https://work.boxuegu.com/education/my-course-manage/my-course/learning-plan",
   // 需要拦截的请求地址

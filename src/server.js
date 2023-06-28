@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const express = require("express");
 const puppeteer = require("puppeteer");
 const { userData } = require("./data/index");
-const { defaultViewport, browserWSEndpoint } = require("./config");
+const { puppeteerConnectOptions } = require("./config");
 const { getDateRange, walkSync, getAllCourseList } = require("./util");
 const app = express();
 
@@ -44,11 +44,7 @@ function createServer() {
   app.listen(80, async () => {
     console.log(chalk.yellow("自动打开学生学习计划管理平台"));
     // 启动浏览器
-    const browser = await puppeteer.connect({
-      browserWSEndpoint,
-      defaultViewport,
-      headless: "new",
-    });
+    const browser = await puppeteer.connect(puppeteerConnectOptions);
     // 在浏览器窗口中加载并测试网站
     page = await browser.newPage();
     await page.goto("http://127.0.0.1");

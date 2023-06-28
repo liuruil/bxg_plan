@@ -3,9 +3,6 @@ const inquirer = require("inquirer");
 const createServer = require("./server");
 const { initSystemConfig, init } = require("./util");
 const { sendCode, login, autoProcess } = require("./script/login");
-
-const { exec } = require("child_process");
-const { start } = require("repl");
 (async () => {
   // 1.初始化配置
   await initSystemConfig();
@@ -32,6 +29,7 @@ const { start } = require("repl");
     // 8. 开启服务器,自动打开我的系统页面
     createServer();
   } catch (error) {
+    console.log(error);
     console.log(`请重新运行此命令 \r\n${chalk.yellow("yarn start")}`);
   }
 })();

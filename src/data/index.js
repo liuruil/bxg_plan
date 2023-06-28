@@ -65,17 +65,18 @@ const ZX_USER_LIST = getIdListByType(userData, ZX_ID);
 
 module.exports = {
   userData,
-  ZXWY: {
-    courseId: ZXWY_ID,
-    courseName: ZXWY_NAME,
-    courseUserIdList: ZXWY_USER_LIST,
-    courseKey: ZXWY_COURSE_KEY,
-  },
   ZX: {
     courseId: ZX_ID,
     courseName: ZX_NAME,
     courseUserIdList: ZX_USER_LIST,
     courseKey: ZX_COURSE_KEY,
   },
+  ZXWY: {
+    courseId: ZXWY_ID,
+    courseName: ZXWY_NAME,
+    courseUserIdList: ZXWY_USER_LIST,
+    courseKey: ZXWY_COURSE_KEY,
+  },
+  // 学生总数
   allStudensCount: ZXWY_USER_LIST.length + ZX_USER_LIST.length,
 };
