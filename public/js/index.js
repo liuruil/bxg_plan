@@ -16,7 +16,7 @@ function convertImgToBase64(url, callback, outputFormat) {
 }
 async function getData(image) {
   const { data } = await axios.post(
-    "https://aip.baidubce.com/rest/2.0/ocr/v1/table?access_token=24.1c18f781a5dc8afe89eff09834e6d0b0.2592000.1689241254.282335-34773198",
+    "https://aip.baidubce.com/rest/2.0/ocr/v1/table?access_token=24.a0dc634f7090f1ce266f87bcfea0167b.2592000.1690531539.282335-34773198",
     {
       image,
     },

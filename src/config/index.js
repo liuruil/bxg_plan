@@ -15,7 +15,7 @@ module.exports = {
   puppeteerConnectOptions: {
     // 浏览器地址
     browserWSEndpoint:
-      "ws://localhost:9222/devtools/browser/0a64458b-3813-408d-99d9-6f29bcea476b",
+      "ws://localhost:9222/devtools/browser/1e88fdd6-2b12-4f13-a6c1-85e01d2ade6f",
     // 默认窗口大小
     defaultViewport: { width: 1920, height: 1080 },
     headless: "new",
@@ -25,7 +25,10 @@ module.exports = {
   // 学习计划页面地址
   baseUrl:
     "https://work.boxuegu.com/education/my-course-manage/my-course/learning-plan",
-  // 需要拦截的请求地址
+  // 拦截的学习计划日期范围请求地址
   interceptUrl:
     "https://admin-gateway.boxuegu.com/teaching/student/learning-plan-task/page",
+  // 拦截搜索学生请求地址
+  interceptSearchUrl:
+    "https://admin-gateway.boxuegu.com/teaching/myCourse/groupStudents",
 };

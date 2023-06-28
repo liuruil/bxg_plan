@@ -1,11 +1,3 @@
-const {
-  baseUrl,
-  duration,
-  snapConfig,
-  interceptUrl,
-  baseUploadImageUrl,
-  puppeteerConnectOptions,
-} = require("../config");
 const fs = require("fs");
 const qs = require("qs");
 const ora = require("ora");
@@ -13,14 +5,9 @@ const path = require("path");
 const axios = require("axios");
 const chalk = require("chalk");
 const puppeteer = require("puppeteer");
-// const scriptFunc = require("../config/script");
-const { ZXWY, ZX, userData, allStudensCount } = require("../data/index");
-let count = 1;
-const spinner = ora({
-  text: `第${count}条数据获取中 [${chalk.yellowBright(count)}/ ${chalk.green(
-    allStudensCount
-  )}]`,
-});
+const { ZXWY, ZX } = require("../data/index");
+const { interceptUrl, baseUploadImageUrl } = require("../config");
+
 /**
  * 拿到webSocketDebuggerUrl
  * @returns {Promise} Promise
@@ -206,33 +193,17 @@ function getScreenshotPath(courseStudentList, stuCourseId, coursePath) {
 }
 
 /**
- * 初始化浏览器
- * @returns
- */
-async function initBrowser(stuCourseId, type) {
-  let browser, page;
-  // 启动浏览器
-  browser = await puppeteer.connect(puppeteerConnectOptions);
-  // 在浏览器窗口中加载并测试网站
-  page = await browser.newPage();
-  await page.goto(`${baseUrl}?stuCourseId=${stuCourseId}&courseId=${type}`);
-  return { page, browser };
-}
-
-/**
  * 修改获取学习计划接口的参数
  * @param {String} url 需要修改的接口
  * @param {String} courseId 课程ID
  * @param {String} stuCourseId 学员ID
  * @returns {String} 修改参数后的接口
  */
-function handleUrlQuery(url, courseId, stuCourseId) {
+function handleUrlQuery(url) {
   const dateArray = getDateRange();
   const params = url.split("?")[1];
   const query = qs.parse(params, { ignoreQueryPrefix: true });
   query.stuPlanTaskTimeStart = dateArray[0];
-  query.stuCourseId = stuCourseId;
-  query.courseId = courseId;
   query.stuPlanTaskTimeEnd = dateArray[0];
   url = `${interceptUrl}?${qs.stringify(query)}`;
   return url;
@@ -259,85 +230,15 @@ async function interceptRequest(page, courseId, stuCourseId) {
   // await page.evaluate(scriptFunc);
 }
 
-/**
- * 执行后续本地操作，存储图片
- * @returns
- */
-async function finallyStep(page, browser, path) {
-  await delay(duration); //等待两秒之后
-  await page.screenshot({
-    ...snapConfig,
-    quality: 100,
-    path,
-  });
-  await page.close(); // 关闭此浏览器页面
-  await browser.disconnect();
-  return;
-}
-
-/**
- * 获取单个学员学习计划方法
- * @param {*} path 图片保存路径
- * @param {*} courseId 课程ID
- * @param {*} stuCourseId 学员ID
- */
-const getScreenshotOfStudyPlan = async (courseId, stuCourseId, path) => {
-  // 初始化浏览器
-  const { page, browser } = await initBrowser(stuCourseId, courseId);
-  // 拦截请求和页面操作
-  await interceptRequest(page, courseId, stuCourseId);
-  //执行下载图片保存
-  await finallyStep(page, browser, path);
-};
-
-/**
- * 获取对应课程的学生的全部学习计划截图
- * @param {*} params0 课程类型和对应的学员id数组
- * @param {*} path  课程相应的文件夹路径
- */
-async function getAllScreenshotByCourse(
-  { courseId, courseUserIdList },
-  coursePath
-) {
-  for (let i = 0; i < courseUserIdList.length; i++) {
-    const path = getScreenshotPath(
-      userData[courseId], // 课程对应的学员信息列表
-      courseUserIdList[i], // 学员ID
-      coursePath // 课程的存储路径
-    );
-    spinner.text = `第${count}条数据获取中 [${chalk.yellowBright(
-      count
-    )}/${chalk.green(allStudensCount)}]`;
-    // 此时算是一个学生计划获取完成
-    await getScreenshotOfStudyPlan(courseId, courseUserIdList[i], path);
-    count++;
-  }
-}
-
-/**
- * 入口函数
- */
-async function init() {
-  console.log("\r");
-  spinner.start();
-  // 先创建相应存放截图文件夹
-  const [ZXWY_PATH, ZX_PATH] = await createScreenshotDir();
-  // 先获取尊享无忧的数据
-  await getAllScreenshotByCourse(ZXWY, ZXWY_PATH);
-  // 再获取尊享的数据
-  await getAllScreenshotByCourse(ZX, ZX_PATH);
-  console.log("\r");
-  spinner.succeed("数据获取完成");
-  console.log("\r");
-}
-
 module.exports = {
-  init,
   delay,
+  getScreenshotPath,
+  createScreenshotDir,
   initSystemConfig,
   walkSync,
   getDateRange,
   setConfigFile,
   getAllCourseList,
   getWebSocketDebuggerUrl,
+  handleUrlQuery,
 };
