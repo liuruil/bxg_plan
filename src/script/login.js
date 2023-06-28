@@ -4,16 +4,12 @@ const { ZXWY } = require("../data");
 const { delay } = require("../util");
 const puppeteer = require("puppeteer");
 const loginScript = require("../config/loginScript");
-const { defaultViewport, browserWSEndpoint } = require("../config");
+const { puppeteerConnectOptions } = require("../config");
 // 发送验证码
 async function sendCode() {
   console.log(chalk.blue("打开浏览器，进入系统登录页面"));
   console.log("\r");
-  const browser = await puppeteer.connect({
-    browserWSEndpoint,
-    defaultViewport,
-    headless: "new",
-  });
+  const browser = await puppeteer.connect(puppeteerConnectOptions);
   // 在浏览器窗口中加载并测试网站
   const page = await browser.newPage();
   await page.goto(

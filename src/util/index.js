@@ -3,9 +3,8 @@ const {
   duration,
   snapConfig,
   interceptUrl,
-  defaultViewport,
-  browserWSEndpoint,
   baseUploadImageUrl,
+  puppeteerConnectOptions,
 } = require("../config");
 const fs = require("fs");
 const qs = require("qs");
@@ -213,11 +212,7 @@ function getScreenshotPath(courseStudentList, stuCourseId, coursePath) {
 async function initBrowser(stuCourseId, type) {
   let browser, page;
   // 启动浏览器
-  browser = await puppeteer.connect({
-    browserWSEndpoint,
-    defaultViewport,
-    headless: "new",
-  });
+  browser = await puppeteer.connect(puppeteerConnectOptions);
   // 在浏览器窗口中加载并测试网站
   page = await browser.newPage();
   await page.goto(`${baseUrl}?stuCourseId=${stuCourseId}&courseId=${type}`);
