@@ -11,14 +11,19 @@ const userData = {
   [ZXWY_ID]: {
     二十九期: [
       {
-        name: "黄嘉杰",
-        id: "1987506",
+        name: "李凯航",
+        id: "2003009",
         nickName: "广州 黄嘉杰",
       },
       {
         name: "侯思婕",
         id: "1988234",
         nickName: "侯思婕",
+      },
+      {
+        name: "武晋川",
+        id: "2003374",
+        nickName: "武晋川",
       },
     ],
   },

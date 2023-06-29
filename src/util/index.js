@@ -3,8 +3,6 @@ const qs = require("qs");
 const ora = require("ora");
 const path = require("path");
 const axios = require("axios");
-const chalk = require("chalk");
-const puppeteer = require("puppeteer");
 const { ZXWY, ZX } = require("../data/index");
 const { interceptUrl, baseUploadImageUrl } = require("../config");
 
@@ -160,6 +158,11 @@ function getDateRange(someday = 0) {
   return dateArray;
 }
 
+/**
+ * 创建相关目录
+ * @param {*} dirname 目录
+ * @returns {Boolean} 是否创建成功
+ */
 function mkdirsSync(dirname) {
   if (fs.existsSync(dirname)) {
     return true;
@@ -195,47 +198,24 @@ function getScreenshotPath(courseStudentList, stuCourseId, coursePath) {
 /**
  * 修改获取学习计划接口的参数
  * @param {String} url 需要修改的接口
- * @param {String} courseId 课程ID
- * @param {String} stuCourseId 学员ID
  * @returns {String} 修改参数后的接口
  */
 function handleUrlQuery(url) {
-  const dateArray = getDateRange();
+  const dateArray = getDateRange(-1);
   const params = url.split("?")[1];
   const query = qs.parse(params, { ignoreQueryPrefix: true });
   query.stuPlanTaskTimeStart = dateArray[0];
-  query.stuPlanTaskTimeEnd = dateArray[0];
+  query.stuPlanTaskTimeEnd = dateArray[dateArray.length - 1];
   url = `${interceptUrl}?${qs.stringify(query)}`;
   return url;
 }
 
-/**
- * !拦截请求和页面操作(勿动)
- * @param {*} page 当前浏览器标签页
- * @param {String} courseId 课程ID
- * @param {String} stuCourseId 课程学员ID
- */
-async function interceptRequest(page, courseId, stuCourseId) {
-  await page.setRequestInterception(true);
-  // 拦截请求 获取相应学员的数据
-  await page.on("request", async (req) => {
-    let url = req.url();
-    // url.includes() true 代表需要拦截的请求url
-    url = url.includes(interceptUrl)
-      ? handleUrlQuery(url, courseId, stuCourseId)
-      : url;
-    req.continue({ url });
-  });
-  // 在浏览器中执行传入函数
-  // await page.evaluate(scriptFunc);
-}
-
 module.exports = {
   delay,
+  walkSync,
   getScreenshotPath,
   createScreenshotDir,
   initSystemConfig,
-  walkSync,
   getDateRange,
   setConfigFile,
   getAllCourseList,

@@ -18,7 +18,6 @@
     >
     <script src="//unpkg.com/vue@3"></script>
     <script src="//unpkg.com/element-plus"></script>
-    <script src="./js/index.js"></script>
 
 </head>
 
@@ -96,23 +95,8 @@
                     this.defaultActive = localStorage.getItem('active') || '0-0'
                     const arr = this.defaultActive.split('-')
                     this.img = this.list[this.menu[arr[0]]][arr[1]]
-                    // 缓存有对应的测试题个数
-                    if (this.testCountCache.has(this.img)) {
-                        this.count = this.testCountCache.get(this.img).count
-                        return;
-                    }
-                    await this.getTestCountFunc()
                 },
                 methods: {
-                    async getTestCountFunc() {
-                        const url = await convertImgToBase64(this.img);
-                        const words_result = await getData(url)
-                        this.count = getTestCount(words_result)
-                        this.testCountCache.set(this.img, {
-                            url,
-                            count: this.count
-                        })
-                    },
                     // 复制文本
                     copyTexy() {
                         navigator.clipboard.writeText(this.text)
@@ -126,11 +110,6 @@
                     async gotoItem(i, index) {
                         this.img = i
                         localStorage.setItem('active', index)
-                        if (this.testCountCache.has(this.img)) {
-                            this.count = this.testCountCache.get(this.img).count
-                            return;
-                        }
-                        await this.getTestCountFunc()
                     },
                     async getMenu() {
                         const res = await axios.get('/courseList')
@@ -159,6 +138,7 @@
                         const student = this.studentsList.find(item => item.name === this.name)
                         if (student) {
                             this.nickname = student.nickName
+                            this.count = student.unitTestCount
                             let text = '昨天的单元测评如果有遗漏的话记得抽时间补上，没有的话请忽略。\n这是今天的学习任务，'
                             text += this.count ? `包含${this.count}个单元测评，` : '无单元测评，'
                             text += '收到回复我哈@' + this.nickname

@@ -5,42 +5,49 @@ const puppeteer = require("puppeteer");
 const { userData } = require("./data/index");
 const { puppeteerConnectOptions } = require("./config");
 const { getDateRange, walkSync, getAllCourseList } = require("./util");
-const app = express();
 
-app.use(express.static(path.join(__dirname, "../public")));
-// 获取所有的课程名称列表
-app.get("/courseList", (req, res) => {
-  res.send(getAllCourseList());
-});
+function createServer(page, unitTestStudentsList) {
+  const app = express();
 
-/**
- * 获取所有学生学习计划截图路径
- */
-app.get("/allStudentsSnapList", (req, res) => {
-  try {
-    var result = [];
-    walkSync(
-      path.join(__dirname, "../public/images/", getDateRange()[0]),
-      (filePath) => result.push(filePath.split("public")[1])
-    );
-    res.send(result);
-  } catch (error) {}
-});
+  app.use(express.static(path.join(__dirname, "../public")));
+  // 获取所有的课程名称列表
+  app.get("/courseList", (req, res) => {
+    res.send(getAllCourseList());
+  });
 
-app.get("/allStudents", (req, res) => {
-  try {
-    var result = Object.values(userData)
-      .map((item) => Object.values(item).flat())
-      .flat()
-      .map((item) => ({
-        name: item.name,
-        nickName: item.nickName,
-      }));
-    res.send(result);
-  } catch (error) {}
-});
+  /**
+   * 获取所有学生学习计划截图路径
+   */
+  app.get("/allStudentsSnapList", (req, res) => {
+    try {
+      var result = [];
+      walkSync(
+        path.join(__dirname, "../public/images/", getDateRange()[0]),
+        (filePath) => result.push(filePath.split("public")[1])
+      );
+      res.send(result);
+    } catch (error) {}
+  });
 
-function createServer(page) {
+  app.get("/allStudents", (req, res) => {
+    try {
+      var result = Object.values(userData)
+        .map((item) => Object.values(item).flat())
+        .flat()
+        .map((item) => {
+          const unitTestCount = unitTestStudentsList.find(
+            (i) => i.name === item.name
+          ).unitTestCount;
+          return {
+            name: item.name,
+            nickName: item.nickName,
+            unitTestCount,
+          };
+        });
+      res.send(result);
+    } catch (error) {}
+  });
+
   app.listen(80, async () => {
     console.log(chalk.yellow("自动打开学生学习计划管理平台"));
     // 启动浏览器
