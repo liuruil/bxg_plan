@@ -37,11 +37,10 @@ function createServer(page, unitTestStudentsList) {
         .map((item) => {
           const unitTestCount = unitTestStudentsList.find(
             (i) => i.name === item.name
-          ).unitTestCount;
+          );
           return {
-            name: item.name,
             nickName: item.nickName,
-            unitTestCount,
+            ...unitTestCount,
           };
         });
       res.send(result);

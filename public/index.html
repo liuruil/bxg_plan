@@ -66,91 +66,12 @@
                         alt=""
                     >
                 </div>
+            </el-card>
         </div>
-        </el-card>
-    </div>
     </div>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-        Vue.createApp({
-                data() {
-                    return {
-                        menu: [],
-                        list: [],
-                        count: 0,
-                        img: '',
-                        name: '',
-                        text: '',
-                        defaultActive: '0-0',
-                        nickname: '',
-                        studentsList: [],
-                        testCountCache: new Map()
-                    }
-                },
-                async mounted() {
-                    await this.getMenu()
-                    await this.getList()
-                    await this.getAllStudents()
-                    this.defaultActive = localStorage.getItem('active') || '0-0'
-                    const arr = this.defaultActive.split('-')
-                    this.img = this.list[this.menu[arr[0]]][arr[1]]
-                },
-                methods: {
-                    // 复制文本
-                    copyTexy() {
-                        navigator.clipboard.writeText(this.text)
-                        this.$notify({
-                            title: '成功',
-                            message: '复制文本成功',
-                            type: 'success',
-                            position: 'bottom-right'
-                        });
-                    },
-                    async gotoItem(i, index) {
-                        this.img = i
-                        localStorage.setItem('active', index)
-                    },
-                    async getMenu() {
-                        const res = await axios.get('/courseList')
-                        this.menu = res.data
-                    },
-                    async getList() {
-                        const res = await axios.get('/allStudentsSnapList')
-                        const obj = {}
-                        this.menu.forEach(element => obj[element] = []);
-                        this.menu.forEach(i => {
-                            const r = res.data.filter(name => name.includes(i))
-                            obj[i] = r
-                        })
-                        this.list = obj
-                    },
-                    async getAllStudents() {
-                        const {
-                            data
-                        } = await axios.get('/allStudents')
-                        this.studentsList = data
-                    }
-                },
-                watch: {
-                    img(imgPath) {
-                        this.name = imgPath.split('期/')[1].split('.')[0]
-                        const student = this.studentsList.find(item => item.name === this.name)
-                        if (student) {
-                            this.nickname = student.nickName
-                            this.count = student.unitTestCount
-                            let text = '昨天的单元测评如果有遗漏的话记得抽时间补上，没有的话请忽略。\n这是今天的学习任务，'
-                            text += this.count ? `包含${this.count}个单元测评，` : '无单元测评，'
-                            text += '收到回复我哈@' + this.nickname
-                            this.text = text
-                        }
-
-                    }
-                }
-            })
-            .use(ElementPlus)
-            .mount('#app')
-    </script>
+    <script src="./js/index.js"></script>
 </body>
 
 </html>
