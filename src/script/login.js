@@ -10,10 +10,11 @@ const {
 } = require("../config");
 const {
   delay,
+  handleUrlQuery,
   getScreenshotPath,
   createScreenshotDir,
-  handleUrlQuery,
 } = require("../util");
+const getUnitTest = require("./getUnitTest");
 // 发送验证码
 async function sendCode() {
   console.log(chalk.blue("打开浏览器，进入系统登录页面"));
@@ -58,6 +59,7 @@ async function autoProcess(page) {
   let count = 0;
   let courseId = ZXWY.courseId;
   let coursePath = ZXWY_PATH;
+  const unitTestStudentsList = [];
   const spinner = ora({
     text: `${
       allStusentsUserList[count].name
@@ -100,7 +102,14 @@ async function autoProcess(page) {
     await page.mouse.move(1875, 460);
     await delay(1000); //等待1500ms
     await page.mouse.click(1875, 498);
-    await delay(2000);
+    await delay(3000);
+    const unitTestCount = await page.evaluate(getUnitTest);
+    //拿到单元测评数量
+    unitTestStudentsList.push({
+      name: allStusentsUserList[count].name,
+      unitTestCount,
+    });
+    await delay(1000);
     await page.screenshot({
       ...snapConfig,
       quality: 100,
@@ -123,6 +132,7 @@ async function autoProcess(page) {
       allStusentsUserList.length
     )}]`;
   }
+  return unitTestStudentsList;
 }
 
 module.exports = {
