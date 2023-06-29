@@ -1,20 +1,21 @@
 const ora = require("ora");
-const chalk = require("chalk");
-const puppeteer = require("puppeteer");
-const { ZXWY, ZX, userData } = require("../data");
-const { interceptSearchUrl } = require("../config");
-const {
-  puppeteerConnectOptions,
-  snapConfig,
-  interceptUrl,
-} = require("../config");
 const {
   delay,
   handleUrlQuery,
   getScreenshotPath,
   createScreenshotDir,
 } = require("../util");
+const {
+  interceptSearchUrl,
+  puppeteerConnectOptions,
+  snapConfig,
+  interceptUrl,
+} = require("../config");
+const chalk = require("chalk");
+const puppeteer = require("puppeteer");
 const getUnitTest = require("./getUnitTest");
+const { ZXWY, ZX, userData } = require("../data");
+
 // 发送验证码
 async function sendCode() {
   console.log(chalk.blue("打开浏览器，进入系统登录页面"));
@@ -48,7 +49,7 @@ async function login(code, page) {
   spinner.succeed("登录成功，跳转到首页");
 }
 
-// 跳转到首页,执行自动点击操作
+// 跳转到首页,执行自动化操作
 async function autoProcess(page) {
   // 先创建相应存放截图文件夹
   const [ZXWY_PATH, ZX_PATH] = await createScreenshotDir();
@@ -107,7 +108,7 @@ async function autoProcess(page) {
     //拿到单元测评数量
     unitTestStudentsList.push({
       name: allStusentsUserList[count].name,
-      unitTestCount,
+      ...unitTestCount,
     });
     await delay(1000);
     await page.screenshot({
@@ -125,7 +126,6 @@ async function autoProcess(page) {
       console.log("\r");
       break;
     }
-    await delay(1000);
     spinner.text = `${
       allStusentsUserList[count].name
     } 同学数据获取中 [${chalk.yellowBright(count + 1)} / ${chalk.green(
