@@ -32,7 +32,7 @@ body,
 }
 
 div.left {
-    width: 200px;
+    width: 275px;
     height: calc(100% - 60px);
     float: left;
     margin-top: 60px;
@@ -57,7 +57,7 @@ div.right.content {
 
 div.right .header {
     padding-bottom: 10px;
-    border-bottom: 2px solid #eaeefb;
+    /* border-bottom: 2px solid #eaeefb; */
 }
 
 div.right img {

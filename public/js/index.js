@@ -43,6 +43,7 @@ Vue.createApp({
       const obj = {};
       this.menu.forEach((element) => (obj[element] = []));
       this.menu.forEach((i) => {
+        console.log(res.data);
         const r = res.data.filter((name) => name.includes(i));
         obj[i] = r;
       });
@@ -55,7 +56,7 @@ Vue.createApp({
   },
   watch: {
     img(imgPath) {
-      this.name = imgPath.split("期/")[1].split(".")[0];
+      this.name = imgPath.split("/")[5].split(".")[0];
       const student = this.studentsList.find((item) => item.name === this.name);
       if (student) {
         let text = "";
