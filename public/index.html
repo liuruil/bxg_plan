@@ -48,7 +48,7 @@
                         :index="index + '-' + ind"
                         @click="gotoItem(i,index + '-' + ind)"
                         v-for="(i,ind) in list[item]"
-                    >{{i.split('期/')[1].split('.')[0]}}</el-menu-item>
+                    >{{i.split('/')[5].split('.')[0]}}</el-menu-item>
                 </el-sub-menu>
             </el-menu>
         </div>

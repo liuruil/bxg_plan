@@ -20,9 +20,10 @@
 
 ```
 
-## 填充 data/index.js 中的学生数据
+## 填充学生数据
 
 ```js
+// data/index.js
 const userData = {
   // 尊享的数据
   [ZX_ID]: {
@@ -49,6 +50,6 @@ const userData = {
 1. yarn chrome
    - 打开浏览器
 2. yarn start
-   - 自动进入登录页面
+   - 输入验证码，自动进入登录页面
    - 获取学生计划截图数据
    - 自动启动服务器，打开页面

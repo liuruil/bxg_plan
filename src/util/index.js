@@ -1,109 +1,13 @@
+// 工具函数
 const fs = require("fs");
 const qs = require("qs");
-const ora = require("ora");
+const vm = require("vm");
 const path = require("path");
-const axios = require("axios");
-const { ZXWY, ZX } = require("../data/index");
-const { interceptUrl, baseUploadImageUrl } = require("../config");
-
-/**
- * 拿到webSocketDebuggerUrl
- * @returns {Promise} Promise
- */
-function getWebSocketDebuggerUrl() {
-  return new Promise((reslove) => {
-    axios.get("http://localhost:9222/json/version").then((res) => {
-      reslove(res.data.webSocketDebuggerUrl);
-    });
-  });
-}
-
-/**
- * 设置config的配置文件
- * @param {*} webSocketDebuggerUrl
- */
-function setConfigFile(webSocketDebuggerUrl) {
-  const data = fs.readFileSync(
-    path.resolve(__dirname, "../config/index.js"),
-    "utf-8"
-  );
-  const reg = /ws:\/\/localhost:9222\/devtools\/browser\/[0-9a-z-]{36}/g;
-  fs.writeFileSync(
-    path.resolve(__dirname, "../config/index.js"),
-    data.replace(reg, webSocketDebuggerUrl)
-  );
-}
-
-/**
- * 初始化系统配置
- */
-async function initSystemConfig() {
-  const spinner = ora({
-    text: "系统配置初始化...",
-  }).start();
-  // 拿到webSocketDebuggerUrl
-  const webSocketDebuggerUrl = await getWebSocketDebuggerUrl();
-  // 设置webSocketDebuggerUrl
-  setConfigFile(webSocketDebuggerUrl);
-  await delay(1000); //等待1000ms
-  spinner.succeed("系统配置初始化完成");
-  console.log("\r");
-}
-
-/**
- * 创建文件夹
- * @param {String} dirname
- * @returns
- */
-function mkdirsSync(dirname) {
-  if (fs.existsSync(dirname)) {
-    return true;
-  } else {
-    if (mkdirsSync(path.dirname(dirname))) {
-      fs.mkdirSync(dirname);
-      return true;
-    }
-  }
-}
-
-/**
- * 获取所有的课程列表
- * @returns ['尊享/7期','尊享/9期',...]
- */
-function getAllCourseList() {
-  const pathList = [];
-  for (let i = 0; i < ZXWY.courseKey.length; i++) {
-    const name = ZXWY.courseKey[i];
-    pathList.push(ZXWY.courseName + "/" + name);
-  }
-  for (let i = 0; i < ZX.courseKey.length; i++) {
-    const name = ZX.courseKey[i];
-    pathList.push(ZX.courseName + "/" + name);
-  }
-  return pathList;
-}
-
-/**
- * 创建保存截图的文件夹
- * @returns {Array} [尊享无忧,尊享] 截图保存路径
- */
-async function createScreenshotDir() {
-  const date = getDateRange()[0];
-  const dirPath = path.resolve(baseUploadImageUrl, date);
-  const ZXWY_PATH = dirPath + `/${ZXWY.courseName}`;
-  const ZX_PATH = dirPath + `/${ZX.courseName}`;
-  // 生成尊享无忧全部文件夹
-  for (let i = 0; i < ZXWY.courseKey.length; i++) {
-    const name = ZXWY.courseKey[i];
-    mkdirsSync(`${ZXWY_PATH}/${name}`);
-  }
-  // 生成尊享全部文件夹
-  for (let i = 0; i < ZX.courseKey.length; i++) {
-    const name = ZX.courseKey[i];
-    mkdirsSync(`${ZX_PATH}/${name}`);
-  }
-  return [ZXWY_PATH, ZX_PATH];
-}
+const util = require("util");
+const NativeModule = require("module");
+fs.readFile = util.promisify(fs.readFile);
+const { interceptUrl } = require("../config");
+const { ZXWY_ID, ZX_ID } = require("../constants");
 
 /**
  * 获取文件夹的所有文件
@@ -210,15 +114,59 @@ function handleUrlQuery(url) {
   return url;
 }
 
+const getModuleFromString = (bundle, filename) => {
+  const m = { exports: {} };
+  const wrapper = NativeModule.wrap(bundle);
+  const script = new vm.Script(wrapper, { filename, displayErrors: true });
+  const result = script.runInThisContext(); // 此处可以指定代码的执行环境，此api在nodejs文档中有介绍
+  result.call(m.exports, m.exports, require, m);
+  // 执行wrapper函数，此处传入require就解决了第一种方法不能require的问题
+  return m;
+};
+
+/**
+ * 动态倒入文件方法
+ * ! 文件中require的文件路径必须是使用这个方法的文件的相对路径
+ * @param {*} path 文件路径
+ * @returns
+ */
+async function dynamicsImportFile(path) {
+  const bundle = await fs.readFile(path, "utf-8");
+  const { exports } = getModuleFromString(bundle, "bundle.js");
+  return exports;
+}
+
+function getSortGroup(groupList) {
+  const studentList = {};
+  groupList.forEach((item) => {
+    const key = item;
+    // const key = item.split("尊享")[1];
+    if (item.includes("【博学谷】")) {
+      if (studentList[ZXWY_ID]) {
+        studentList[ZXWY_ID][key] = [];
+      } else {
+        studentList[ZXWY_ID] = {};
+        studentList[ZXWY_ID][key] = [];
+      }
+    } else {
+      if (studentList[ZX_ID]) {
+        studentList[ZX_ID][key] = [];
+      } else {
+        studentList[ZX_ID] = {};
+        studentList[ZX_ID][key] = [];
+      }
+    }
+  });
+  return studentList;
+}
+
 module.exports = {
   delay,
+  mkdirsSync,
   walkSync,
   getScreenshotPath,
-  createScreenshotDir,
-  initSystemConfig,
+  dynamicsImportFile,
   getDateRange,
-  setConfigFile,
-  getAllCourseList,
-  getWebSocketDebuggerUrl,
+  getSortGroup,
   handleUrlQuery,
 };

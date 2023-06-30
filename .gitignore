@@ -3,3 +3,4 @@ public/images/*
 */.DS_Store
 .vscode
 .DS_Store
+src/data/*

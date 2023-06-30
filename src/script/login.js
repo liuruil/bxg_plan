@@ -1,20 +1,23 @@
+const fs = require("fs");
+const {
+  snapConfig,
+  interceptUrl,
+  interceptSearchUrl,
+  puppeteerConnectOptions,
+} = require("../config");
 const ora = require("ora");
+const path = require("path");
+const chalk = require("chalk");
+const puppeteer = require("puppeteer");
+const getUnitTest = require("./getUnitTest");
+const { getSortGroup } = require("../util/index");
+const { ZXWY_ID, ZX_ID } = require("../constants");
 const {
   delay,
   handleUrlQuery,
   getScreenshotPath,
-  createScreenshotDir,
+  dynamicsImportFile,
 } = require("../util");
-const {
-  interceptSearchUrl,
-  puppeteerConnectOptions,
-  snapConfig,
-  interceptUrl,
-} = require("../config");
-const chalk = require("chalk");
-const puppeteer = require("puppeteer");
-const getUnitTest = require("./getUnitTest");
-const { ZXWY, ZX, userData } = require("../data");
 
 // 发送验证码
 async function sendCode() {
@@ -49,18 +52,88 @@ async function login(code, page) {
   spinner.succeed("登录成功，跳转到首页");
 }
 
-// 跳转到首页,执行自动化操作
-async function autoProcess(page) {
-  // 先创建相应存放截图文件夹
+/**
+ * 执行自动化操作
+ * @param {*} page 浏览器标签页
+ * @param {Array} groupList 学员企业微信群列表
+ * @returns {Array} 学员单元测评数量
+ */
+async function autoProcess(page, groupList) {
+  // 获取学生截图相关的
+  let count = 0;
+  let courseId = ZXWY_ID;
+  let coursePath = "";
+  const unitTestStudentsList = [];
+  // 获取学生数据正确的格式格式
+  const studentList = getSortGroup(groupList);
+  let groupCount = 0;
+  var groupCourseId = ZXWY_ID;
+
+  // 是否在执行获取学生信息列表的操作
+  let isGetStudentList = true;
+  // 拦截请求
+  console.log(chalk.blue("\r点击教学实施端按钮"));
+  await page.mouse.click(373, 49);
+  await delay(2000); //等待2000ms
+  console.log(chalk.blue("\r\n进入尊享无忧学员列表\r\n"));
+  await page.mouse.click(495, 320);
+  console.log(chalk.blue("获取学生列表数据中..."));
+  await page.setRequestInterception(true);
+  page.on("request", async (req) => {
+    // 正常获取学生截图
+    let url = req.url();
+    if (url.includes(interceptSearchUrl)) {
+      if (!isGetStudentList) {
+        url = `${interceptSearchUrl}?pageNum=1&pageSize=20&courseIds=${courseId}&name=${allStusentsUserList[count].name}`;
+      } else {
+        url = `${interceptSearchUrl}?pageNum=1&pageSize=20&courseIds=${groupCourseId}&groupName=${groupList[groupCount]}`;
+      }
+    }
+    if (url.includes(interceptUrl) && !isGetStudentList) {
+      url = handleUrlQuery(url);
+    }
+    req.continue({ url });
+  });
+  page.on("response", async (res) => {
+    if (isGetStudentList) {
+      if (res.url().includes(interceptSearchUrl)) {
+        res.text().then((res) => {
+          var data = JSON.parse(res).data.records.map((item) => ({
+            name: item.name,
+            id: item.stuCourseId,
+            nickName: item.groupNickName,
+          }));
+          studentList[groupCourseId][groupList[groupCount]] = data;
+        });
+      }
+    }
+  });
+  // 获取学员学生列表数据
+  while (true) {
+    await page.mouse.click(1518, 326);
+    await delay(3000);
+    if (++groupCount === Object.keys(studentList[ZXWY_ID]).length)
+      groupCourseId = ZX_ID;
+    if (groupCount === groupList.length) break;
+  }
+  fs.writeFileSync(
+    path.resolve(__dirname, "../data/student.json"),
+    JSON.stringify(studentList)
+  );
+  console.log(chalk.blue("\r\n学生数据写入成功\r\n"));
+  // 此时不再执行获取学生信息列表的操作;
+  isGetStudentList = false;
+  const { ZXWY, ZX, userData, createScreenshotDir } = await dynamicsImportFile(
+    path.resolve(__dirname, "../util/student.js")
+  );
+  // 2. 创建相关文件夹，存放图片
   const [ZXWY_PATH, ZX_PATH] = await createScreenshotDir();
+  coursePath = ZXWY_PATH;
   const allStusentsUserList = [
     ...ZXWY.courseUserIdList,
     ...ZX.courseUserIdList,
   ];
-  let count = 0;
-  let courseId = ZXWY.courseId;
-  let coursePath = ZXWY_PATH;
-  const unitTestStudentsList = [];
+  console.clear();
   const spinner = ora({
     text: `${
       allStusentsUserList[count].name
@@ -68,29 +141,14 @@ async function autoProcess(page) {
       allStusentsUserList.length
     )}]`,
   });
-  // 拦截请求
-  await page.setRequestInterception(true);
-  page.on("request", async (req) => {
-    let url = req.url();
-    if (url.includes(interceptSearchUrl)) {
-      url = `${interceptSearchUrl}?pageNum=1&pageSize=20&courseIds=${courseId}&name=${allStusentsUserList[count].name}`;
-    }
-    if (url.includes(interceptUrl)) {
-      url = handleUrlQuery(url);
-    }
-    req.continue({ url });
-  });
-  console.log("\r");
-  console.log(chalk.blue("点击教学实施端按钮"));
-  await page.mouse.click(373, 49);
-  await delay(2000); //等待2000ms
-  console.log("\r");
-  console.log(chalk.blue("点击尊享无忧课程"));
-  await page.mouse.click(495, 320);
   while (true) {
+    if (count === 0) {
+      await page.mouse.click(1518, 326);
+      await delay(3000); //等待三秒钟后
+    }
     spinner.start();
     if (count === ZXWY.courseUserIdList.length) {
-      courseId = ZX.courseId;
+      courseId = ZX_ID;
       coursePath = ZX_PATH;
       await page.mouse.click(277, 95);
       await delay(1500); //等待1.5秒钟后
@@ -120,10 +178,8 @@ async function autoProcess(page) {
         coursePath // 课程的存储路径
       ),
     });
-    count++;
-    if (count === allStusentsUserList.length) {
-      spinner.succeed("数据获取完成");
-      console.log("\r");
+    if (++count === allStusentsUserList.length) {
+      spinner.succeed("数据获取完成\r");
       break;
     }
     spinner.text = `${
