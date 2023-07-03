@@ -106,7 +106,6 @@ function autoProcess(page, groupList) {
             ...ZXWY.courseUserIdList,
             ...ZX.courseUserIdList,
           ];
-          await delay(3000);
           await getStudentSource(ZXWY, userData, ZX_PATH);
           return;
         }
@@ -116,7 +115,7 @@ function autoProcess(page, groupList) {
           groupCourseId = ZX_ID;
         await page.click(".search-common .ant-btn-primary");
       }
-      
+
       // 获取单个学生的数据
       async function getStudentSource(ZXWY, userData, ZX_PATH) {
         //  更改称为尊享的学员列表
@@ -135,7 +134,6 @@ function autoProcess(page, groupList) {
           }).start();
           await page.click(".search-common .ant-btn-primary");
           await delay(3000); //等待三秒钟后
-          // await delay(2000); //等待三秒钟后
           await page.mouse.move(1875, 460);
           await delay(1000); //等待1500ms
           await page.mouse.click(1875, 498);
@@ -176,31 +174,34 @@ function autoProcess(page, groupList) {
       page.on("request", async (req) => {
         // 正常获取学生截图
         let url = req.url();
-        if (url.includes(interceptSearchUrl)) {
+        if (url.includes(interceptSearchUrl) && req.method() === "GET") {
           if (!isGetStudentList) {
             url = `${interceptSearchUrl}?pageNum=1&pageSize=20&courseIds=${courseId}&name=${allStusentsUserList[count].name}`;
           } else {
             url = `${interceptSearchUrl}?pageNum=1&pageSize=20&courseIds=${groupCourseId}&groupName=${groupList[groupCount]}`;
           }
         }
-        if (url.includes(interceptUrl) && !isGetStudentList) {
+        if (
+          url.includes(interceptUrl) &&
+          !isGetStudentList &&
+          req.method() === "GET"
+        ) {
           url = handleUrlQuery(url, allStusentsUserList[count].id, courseId);
         }
         req.continue({ url });
       });
 
       page.on("response", async (res) => {
-        if (isGetStudentList) {
-          if (res.url().includes(interceptSearchUrl)) {
-            const data = await res.text();
-            const result = JSON.parse(data).data.records.map((item) => ({
+        if (isGetStudentList && res.url().includes(interceptSearchUrl)) {
+          const result = JSON.parse(await res.text()).data.records.map(
+            (item) => ({
               name: item.name,
               id: item.stuCourseId,
               nickName: item.groupNickName,
-            }));
-            studentList[groupCourseId][groupList[groupCount]] = result;
-            await getStudentGroup();
-          }
+            })
+          );
+          studentList[groupCourseId][groupList[groupCount]] = result;
+          await getStudentGroup();
         }
       });
     })();
