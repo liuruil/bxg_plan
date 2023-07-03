@@ -104,11 +104,13 @@ function getScreenshotPath(courseStudentList, stuCourseId, coursePath) {
  * @param {String} url 需要修改的接口
  * @returns {String} 修改参数后的接口
  */
-function handleUrlQuery(url) {
+function handleUrlQuery(url, stuCourseId, courseId) {
   const dateArray = getDateRange(-1);
   const params = url.split("?")[1];
   const query = qs.parse(params, { ignoreQueryPrefix: true });
   query.stuPlanTaskTimeStart = dateArray[0];
+  query.stuCourseId = stuCourseId;
+  query.courseId = courseId;
   query.stuPlanTaskTimeEnd = dateArray[dateArray.length - 1];
   url = `${interceptUrl}?${qs.stringify(query)}`;
   return url;

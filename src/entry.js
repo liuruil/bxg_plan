@@ -29,4 +29,4 @@ const { sendCode, login, autoProcess } = require("./script/login");
     console.log(error);
     console.log(`请重新运行此命令 \r\n${chalk.yellow("yarn start")}`);
   }
-})(["【博学谷】前端就业班-尊享29期", "A-前端尊享14群"]);
+})(["【博学谷】前端就业班-尊享30期", "A-前端尊享15群"]);

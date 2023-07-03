@@ -24,6 +24,11 @@ module.exports = () => {
   }
 
   const all = [...document.querySelectorAll(".ant-table-row-level-0")];
+  // 重制默认样式
+  all.forEach((item) => {
+    item.style.backgroundColor = "#fff";
+    item.style.color = "rgba(0, 0, 0, 0.85)";
+  });
 
   if (!all.length) {
     unitTestCount.today = 0;

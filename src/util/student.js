@@ -42,7 +42,6 @@ const ZXWY = {
   courseUserIdList: ZXWY_USER_LIST,
   courseKey: ZXWY_COURSE_KEY,
 };
-
 const allStudensCount = ZXWY_USER_LIST.length + ZX_USER_LIST.length;
 
 /**
