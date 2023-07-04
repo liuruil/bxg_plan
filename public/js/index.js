@@ -19,7 +19,7 @@ Vue.createApp({
     await this.getMenu();
     await this.getList();
     await this.getAllStudents();
-    this.defaultActive = localStorage.getItem("active") || "0-0";
+    this.defaultActive = sessionStorage.getItem("active") || "0-0";
     const arr = this.defaultActive.split("-");
     this.img = this.list[this.menu[arr[0]]][arr[1]];
   },
@@ -36,7 +36,7 @@ Vue.createApp({
     },
     async gotoItem(i, index) {
       this.img = i;
-      localStorage.setItem("active", index);
+      sessionStorage.setItem("active", index);
     },
     async getMenu() {
       const res = await axios.get("/courseList");

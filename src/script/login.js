@@ -48,7 +48,7 @@ async function login(code, page) {
   const spinner = ora({
     text: "登录中......",
   }).start();
-  await delay(8000); //等一段时间
+  await delay(7000); //等一段时间
   spinner.succeed("登录成功，已跳转到首页");
 }
 
@@ -133,7 +133,7 @@ function autoProcess(page, groupList) {
             )}]`,
           }).start();
           await page.click(".search-common .ant-btn-primary");
-          await delay(3000); //等待三秒钟后
+          await delay(2000); //等待三秒钟后
           await page.mouse.move(1875, 460);
           await delay(1000); //等待1500ms
           await page.mouse.click(1875, 498);

@@ -15,7 +15,7 @@ module.exports = {
   puppeteerConnectOptions: {
     // 浏览器地址
     browserWSEndpoint:
-      "ws://localhost:9222/devtools/browser/d529acfd-b6e2-4b65-8966-c53698e13124",
+      "ws://localhost:9222/devtools/browser/a771a6d1-22d5-46cc-93ec-65f1804ae02c",
     // 默认窗口大小
     defaultViewport: { width: 1920, height: 1080 },
     headless: "new",
