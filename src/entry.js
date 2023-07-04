@@ -4,6 +4,7 @@ const createServer = require("./util/server");
 const { initSystemConfig } = require("./util/config");
 const { sendCode, login, autoProcess } = require("./script/login");
 (async (groupList) => {
+  console.time();
   console.clear();
   // 1.初始化配置
   await initSystemConfig();
@@ -26,6 +27,7 @@ const { sendCode, login, autoProcess } = require("./script/login");
     const unitTestStudentsList = await autoProcess(page, groupList);
     // 6. 开启服务器,自动打开我的系统页面
     await createServer(page, unitTestStudentsList);
+    console.timeEnd();
   } catch (error) {
     console.log(error);
     console.log(`请重新运行此命令 \r\n${chalk.yellow("yarn start")}`);
