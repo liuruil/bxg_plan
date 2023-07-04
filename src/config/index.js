@@ -1,7 +1,7 @@
 const path = require("path");
 module.exports = {
-  //页面停滞几秒后截图
-  duration: 3500,
+  // 负责的群列表(尊享无忧在前，尊享在后)
+  groupList: ["【博学谷】前端就业班-尊享30期", "A-前端尊享15群"],
   // 图片裁剪配置
   snapConfig: {
     clip: {
@@ -25,10 +25,10 @@ module.exports = {
   // 学习计划页面地址
   baseUrl:
     "https://work.boxuegu.com/education/my-course-manage/my-course/learning-plan",
-  // 拦截的学习计划日期范围请求地址
+  // 拦截的学习计划详情请求地址
   interceptUrl:
     "https://admin-gateway.boxuegu.com/teaching/student/learning-plan-task/page",
-  // 拦截搜索学生请求地址
+  // 拦截搜索群对应学生请求地址
   interceptSearchUrl:
     "https://admin-gateway.boxuegu.com/teaching/myCourse/groupStudents",
 };

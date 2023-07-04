@@ -2,6 +2,7 @@ Vue.createApp({
   data() {
     return {
       menu: [],
+      separator: "/",
       list: [],
       img: "",
       name: "",
@@ -12,6 +13,9 @@ Vue.createApp({
     };
   },
   async mounted() {
+    if (navigator.platform.includes("win")) {
+      this.separator = "\\\\";
+    }
     await this.getMenu();
     await this.getList();
     await this.getAllStudents();
@@ -56,7 +60,7 @@ Vue.createApp({
   },
   watch: {
     img(imgPath) {
-      this.name = imgPath.split("/")[5].split(".")[0];
+      this.name = imgPath.split(this.separator)[5].split(".")[0];
       const student = this.studentsList.find((item) => item.name === this.name);
       if (student) {
         let text = "";
