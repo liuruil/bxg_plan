@@ -164,11 +164,11 @@ function getSortGroup(groupList) {
 
 module.exports = {
   delay,
-  mkdirsSync,
   walkSync,
-  getScreenshotPath,
-  dynamicsImportFile,
+  mkdirsSync,
   getDateRange,
   getSortGroup,
   handleUrlQuery,
+  getScreenshotPath,
+  dynamicsImportFile,
 };

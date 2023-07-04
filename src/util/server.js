@@ -1,9 +1,8 @@
 const path = require("path");
 const chalk = require("chalk");
 const express = require("express");
-const { getDateRange, walkSync } = require("../util/index");
-const fs = require("fs");
 const { dynamicsImportFile } = require("./index");
+const { getDateRange, walkSync } = require("../util/index");
 
 /**
  *

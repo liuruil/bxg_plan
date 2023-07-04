@@ -48,8 +48,8 @@ async function login(code, page) {
   const spinner = ora({
     text: "登录中......",
   }).start();
-  await delay(5000); //等一段时间
-  spinner.succeed("登录成功，跳转到首页");
+  await delay(8000); //等一段时间
+  spinner.succeed("登录成功，已跳转到首页");
 }
 
 /**
@@ -61,22 +61,22 @@ async function login(code, page) {
 function autoProcess(page, groupList) {
   return new Promise((resolve) => {
     (async () => {
-      // 获取学生截图相关的
-      let count = 0;
-      let courseId = ZXWY_ID;
-      let coursePath = "";
-      let spinner = null;
-      const unitTestStudentsList = [];
-      let allStusentsUserList = [];
-      // 获取学生数据正确的格式格式
+      // !获取学生截图相关的变量
+      let count = 0; //目前获取到第几个学生的学习计划
+      let courseId = ZXWY_ID; //默认的课程类别是尊享无忧
+      let coursePath = ""; // 图片保存路径
+      let spinner = null; // 展示 loading
+      const unitTestStudentsList = []; // 单元测评存放
+      let allStusentsUserList = []; // 扁平化学生数据列表
+
+      // !获取学生数据正确的格式的变量
       const studentList = getSortGroup(groupList);
-      let groupCount = 0;
-      var groupCourseId = ZXWY_ID;
-      // 是否在执行获取学生信息列表的操作
-      let isGetStudentList = true;
-      // 拦截请求
+      let groupCount = 0; // 企业群获取到第几个了
+      var groupCourseId = ZXWY_ID; // 默认的课程类别是尊享无忧
+      let isGetStudentList = true; // 是否在执行获取学生信息列表的操作
+      // !拦截请求
       await delay(1000); //等待2000ms
-      console.log(chalk.blue("\r点击教学实施端按钮"));
+      console.log(chalk.blue("\r\n点击教学实施端按钮"));
       await page.click(".ant-layout-header>div>div>div:nth-child(2)");
       await delay(2000); //等待2000ms
       console.log(chalk.blue("\r\n进入尊享无忧学员列表\r\n"));
@@ -85,7 +85,7 @@ function autoProcess(page, groupList) {
 
       await page.setRequestInterception(true);
 
-      // 获取班级的学员数据
+      // 获取单个企业微信群的学员列表的方法
       async function getStudentGroup() {
         if (++groupCount === groupList.length) {
           fs.writeFileSync(
@@ -116,7 +116,7 @@ function autoProcess(page, groupList) {
         await page.click(".search-common .ant-btn-primary");
       }
 
-      // 获取单个学生的数据
+      // 获取单个学生的数据的方法
       async function getStudentSource(ZXWY, userData, ZX_PATH) {
         //  更改称为尊享的学员列表
         if (count === ZXWY.courseUserIdList.length) {
@@ -159,7 +159,7 @@ function autoProcess(page, groupList) {
           ),
         });
         if (++count === allStusentsUserList.length) {
-          spinner.succeed("数据获取完成\r");
+          spinner.succeed("数据获取完成\r\n");
           resolve(unitTestStudentsList);
         } else {
           spinner.text = `${
@@ -192,7 +192,11 @@ function autoProcess(page, groupList) {
       });
 
       page.on("response", async (res) => {
-        if (isGetStudentList && res.url().includes(interceptSearchUrl)) {
+        if (
+          res.request().method() === "GET" &&
+          isGetStudentList &&
+          res.url().includes(interceptSearchUrl)
+        ) {
           const result = JSON.parse(await res.text()).data.records.map(
             (item) => ({
               name: item.name,
