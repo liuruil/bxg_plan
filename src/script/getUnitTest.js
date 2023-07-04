@@ -7,7 +7,7 @@ module.exports = () => {
   /**
    * 获取某天的单元测评数量
    * @params {HTMLElement} dayTh 当天的表格element日期元素
-   * @params {Function} callback 对于选中的单元测评做的相关处理(昨天的只需要未发布的)
+   * @params {Function} callback 对于选中的单元测评元素做的相关处理(昨天的只需要未发布的)
    */
   function getSomeDayUnitTest(dayTh, callback) {
     // resultElement .filter((item) => !item.innerText.includes("已发布\n\t\n1/1"));
@@ -26,11 +26,6 @@ module.exports = () => {
             item.innerText.includes("单元测试")
         );
       callback && (resultElement = callback(resultElement));
-      // 添加背景标注
-      resultElement.forEach((item) => {
-        item.style.backgroundColor = "cornflowerblue";
-        item.style.color = "#fff";
-      });
       return resultElement.length;
     }
   }
@@ -76,10 +71,25 @@ module.exports = () => {
     `td[title="${getDateRange(-1)[0]}"]:first-child`
   );
 
-  unitTestCount.today = getSomeDayUnitTest(dateTh);
+  unitTestCount.today = getSomeDayUnitTest(dateTh, (resultElement) => {
+    // 添加背景标注
+    resultElement.forEach((item) => {
+      item.style.backgroundColor = "#F56C6C";
+      item.style.color = "#fff";
+    });
 
-  unitTestCount.yesterday = getSomeDayUnitTest(yestdayTh, (resultElement) =>
-    resultElement.filter((item) => !item.innerText.includes("已发布\n\t\n1/1"))
-  );
+    return resultElement;
+  });
+
+  unitTestCount.yesterday = getSomeDayUnitTest(yestdayTh, (resultElement) => {
+    resultElement = resultElement.filter(
+      (item) => !item.innerText.includes("已发布\n\t\n1/1")
+    );
+    resultElement.forEach((item) => {
+      item.style.backgroundColor = "#E6A23C";
+      item.style.color = "#fff";
+    });
+    return resultElement;
+  });
   return unitTestCount;
 };

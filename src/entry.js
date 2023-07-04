@@ -1,9 +1,10 @@
 const chalk = require("chalk");
 const inquirer = require("inquirer");
+const { groupList } = require("./config");
 const createServer = require("./util/server");
 const { initSystemConfig } = require("./util/config");
 const { sendCode, login, autoProcess } = require("./script/login");
-(async (groupList) => {
+(async () => {
   console.time();
   console.clear();
   // 1.初始化配置
@@ -32,4 +33,4 @@ const { sendCode, login, autoProcess } = require("./script/login");
     console.log(error);
     console.log(`请重新运行此命令 \r\n${chalk.yellow("yarn start")}`);
   }
-})(["【博学谷】前端就业班-尊享30期", "A-前端尊享15群"]);
+})();

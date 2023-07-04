@@ -1,6 +1,6 @@
 {
   "name": "snap-project",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "一个学习计划截图工具",
   "main": "./src/entry.js",
   "scripts": {
