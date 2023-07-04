@@ -2,7 +2,7 @@
   "name": "snap-project",
   "version": "1.0.0",
   "description": "一个学习计划截图工具",
-  "main": "./src/index.js",
+  "main": "./src/entry.js",
   "scripts": {
     "start": "node ./src/entry.js",
     "chrome": "sudo /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9222"

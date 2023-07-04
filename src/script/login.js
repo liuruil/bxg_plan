@@ -140,7 +140,7 @@ function autoProcess(page, groupList) {
           await delay(3000);
         } else {
           await page.click(".search-common .ant-btn-primary");
-          await delay(3000);
+          await delay(2000);
         }
         const unitTestCount = await page.evaluate(getUnitTest);
         //拿到单元测评数量
