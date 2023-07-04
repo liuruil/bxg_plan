@@ -6,8 +6,8 @@ module.exports = () => {
 
   /**
    * 获取某天的单元测评数量
-   * @params {HTMLElement} 当天的表格element日期元素
-   * @callback {Function} 对于选中的单元测评做的相关处理(昨天的只需要未发布的)
+   * @params {HTMLElement} dayTh 当天的表格element日期元素
+   * @params {Function} callback 对于选中的单元测评做的相关处理(昨天的只需要未发布的)
    */
   function getSomeDayUnitTest(dayTh, callback) {
     // resultElement .filter((item) => !item.innerText.includes("已发布\n\t\n1/1"));
