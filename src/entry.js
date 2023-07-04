@@ -4,6 +4,7 @@ const createServer = require("./util/server");
 const { initSystemConfig } = require("./util/config");
 const { sendCode, login, autoProcess } = require("./script/login");
 (async (groupList) => {
+  console.clear();
   // 1.初始化配置
   await initSystemConfig();
   console.log(chalk.blue("🚀 开始执行登录程序\r\n"));
