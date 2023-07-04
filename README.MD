@@ -10,46 +10,32 @@
   + js         # js文件
   + index.html # 前台入口
 + src
+  + api        # 接口文件
   + config     # 配置文件
+  + constants  # 常量文件
   + data       # 学生数据
   + script     # 脚本文件
   + util       # 工具函数
-  + index.js   # 主文件
   + entry.js   # 入口文件
-  + serve.js   # 后端服务
 
-```
-
-## 填充学生数据
-
-```js
-// data/index.js
-const userData = {
-  // 尊享的数据
-  [ZX_ID]: {
-    三期: [
-      { name: "李四", id: "1966333", nickName: "群昵称" },
-      //   ...
-    ],
-  },
-  // 尊享的数据
-  [ZXWY_ID]: {
-    二十九期: [
-      {
-        name: "赵五",
-        id: "1997102",
-        nickName: "群昵称",
-      },
-    ],
-  },
-};
 ```
 
 ## 命令介绍
 
 1. yarn chrome
    - 打开浏览器
-2. yarn start
+2. 填充数据
+
+```js
+// 修改 config/index.js的 groupList 选项
+module.exports = {
+  // 负责的群列表(尊享无忧在前，尊享在后)
+  groupList: ["【博学谷】前端就业班-尊享30期", "A-前端尊享15群"],
+};
+```
+
+3. yarn start
    - 输入验证码，自动进入登录页面
+   - 获取群的所有学生
    - 获取学生计划截图数据
    - 自动启动服务器，打开页面

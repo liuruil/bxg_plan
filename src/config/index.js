@@ -1,6 +1,6 @@
 const path = require("path");
 module.exports = {
-  // 负责的群列表
+  // 负责的群列表(尊享无忧在前，尊享在后)
   groupList: ["【博学谷】前端就业班-尊享30期", "A-前端尊享15群"],
   // 图片裁剪配置
   snapConfig: {
@@ -23,7 +23,6 @@ module.exports = {
   // 存放图片的默认路径
   baseUploadImageUrl: path.resolve(__dirname, "../../public/images"),
   // 学习计划页面地址
-
   baseUrl:
     "https://work.boxuegu.com/education/my-course-manage/my-course/learning-plan",
   // 拦截的学习计划详情请求地址
