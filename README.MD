@@ -22,8 +22,9 @@
 
 ## 命令介绍
 
-1. yarn chrome
-   - 打开浏览器
+1. 打开 chrome 浏览器远程调试端口
+   - 任务管理器先结束浏览器进程，window 右键 chrome 浏览器图标，点击属性，目标字段 添加 `--remote-debugging-port=9222`，打开浏览器，直到输入`http://localhost:9222/json/version`得到响应即表示成功。
+   - mac `yarn chrome` 即可
 2. 填充数据
 
 ```js
