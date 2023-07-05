@@ -69,7 +69,7 @@ Vue.createApp({
         if (student.yesterday) {
           text += `昨天的单元测评有${student.yesterday}个未完成,记得补一下哈。`;
         }
-        text += "\n这是今天的学习任务，";
+        text += "\n今天的学习任务截图已标注，";
         text += todayCount ? `包含${todayCount}个单元测评，` : "无单元测评，";
         text += "收到回复我哈@" + this.nickname;
         this.text = text;

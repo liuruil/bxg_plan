@@ -5,29 +5,37 @@ module.exports = () => {
   };
 
   /**
+   * 获取到全部单元测评元素之后的回调处理
+   *
+   * @callback elementCallback
+   * @param {HTMLElement[]} resultElement
+   */
+  /**
    * 获取某天的单元测评数量
-   * @params {HTMLElement} dayTh 当天的表格element日期元素
-   * @params {Function} callback 对于选中的单元测评元素做的相关处理(昨天的只需要未发布的)
+   * @param {HTMLElement} dayTh - 当天的表格element日期元素
+   * @param {elementCallback} callback - 获取到全部单元测评元素之后的回调处理
    */
   function getSomeDayUnitTest(dayTh, callback) {
-    // resultElement .filter((item) => !item.innerText.includes("已发布\n\t\n1/1"));
     // 昨天的单元测评获取
-    if (!dayTh) {
-      return 0;
-    } else {
-      const first = dayTh.parentNode;
-      const index = all.findIndex((item) => item === first);
-      const count = parseInt(dayTh.getAttribute("rowspan") || 1);
-      resultElement = all
-        .slice(index, index + count + 1)
-        .filter(
-          (item) =>
-            item.innerText.includes("单元测评") ||
-            item.innerText.includes("单元测试")
-        );
-      callback && (resultElement = callback(resultElement));
-      return resultElement.length;
+    if (!dayTh) return 0;
+    const first = dayTh.parentNode;
+    const index = all.findIndex((item) => item === first);
+    const count = parseInt(dayTh.getAttribute("rowspan") || 0);
+    resultElement = all.slice(index, index + count);
+    if (dayTh.innerText === getDateRange()[0]) {
+      resultElement.forEach((item) => {
+        item.style.backgroundColor = "#3E7BFA";
+        item.style.color = "#fff";
+      });
     }
+    console.log(resultElement);
+    resultElement = resultElement.filter(
+      (item) =>
+        item.innerText.includes("单元测评") ||
+        item.innerText.includes("单元测试")
+    );
+    callback && (resultElement = callback(resultElement));
+    return resultElement.length;
   }
 
   function getDateRange(someday = 0) {
@@ -51,7 +59,7 @@ module.exports = () => {
 
   const all = [...document.querySelectorAll(".ant-table-row-level-0")];
 
-  // 重制默认样式
+  // 重置默认样式
   all.forEach((item) => {
     item.style.backgroundColor = "#fff";
     item.style.color = "rgba(0, 0, 0, 0.85)";
@@ -63,14 +71,17 @@ module.exports = () => {
     return unitTestCount;
   }
 
+  // 得到今天的日期单元格元素
   const dateTh = document.querySelector(
     `td[title="${getDateRange()[0]}"]:first-child`
   );
 
+  // 得到昨天的日期单元格元素
   const yestdayTh = document.querySelector(
     `td[title="${getDateRange(-1)[0]}"]:first-child`
   );
 
+  // 获取到今天的单元测评数量
   unitTestCount.today = getSomeDayUnitTest(dateTh, (resultElement) => {
     // 添加背景标注
     resultElement.forEach((item) => {
@@ -81,6 +92,7 @@ module.exports = () => {
     return resultElement;
   });
 
+  // 获取到昨天的单元测评数量
   unitTestCount.yesterday = getSomeDayUnitTest(yestdayTh, (resultElement) => {
     resultElement = resultElement.filter(
       (item) => !item.innerText.includes("已发布\n\t\n1/1")
@@ -91,5 +103,6 @@ module.exports = () => {
     });
     return resultElement;
   });
+
   return unitTestCount;
 };
